@@ -1,5 +1,5 @@
 'use strict'
-
+import { serve } from "https://deno.land/std@0.120.0/http/server.ts";
 /**
  * static files (404.html, sw.js, conf.js)
  */
@@ -42,18 +42,14 @@ function newUrl(urlStr) {
 }
 
 
-addEventListener('fetch', e => {
-  const ret = fetchHandler(e)
-    .catch(err => makeRes('cfworker error:\n' + err.stack, 502))
-  e.respondWith(ret)
-})
+await serve(fetchHandler);
 
 
 /**
  * @param {FetchEvent} e 
  */
 async function fetchHandler(e) {
-  const req = e.request
+  const req = e
   const urlStr = req.url
   const urlObj = new URL(urlStr)
   const path = urlObj.href.substr(urlObj.origin.length)
